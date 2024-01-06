@@ -1,7 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include <stdio.h>
-int ThreadToFiber();
+int ThreadToFiber(char Shellcode[], DWORD ShellcodeSize);
+int ShellcodeInjectSimple(HANDLE hProcess, char Shellcode[], int ShellcodeSize);
 // hello world shellcode
 //unsigned char shellcode[] = { "\x48\x83\xEC\x28\x48\x83\xE4\xF0\x48\x8D\x15\x66\x00\x00\x00"
 //                        "\x48\x8D\x0D\x52\x00\x00\x00\xE8\x9E\x00\x00\x00\x4C\x8B\xF8"
